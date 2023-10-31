@@ -56,7 +56,7 @@ Constraints:
     nums[i] will be unique.
 
 """
-
+from operator import mul
 from typing import List
 
 
@@ -64,27 +64,10 @@ class Solution:
     def sumDistance(self, nums: List[int], s: str, d: int) -> int:
         n = nums.__len__()
         s = [-1 if i == 'L' else 1 for i in s]
-        ns = [[nums[i], s[i]] for i in range(n)]
-        ns.sort(key=lambda x: x[0])
-        for _ in range(d):
-            for i in range(n):
-                ns[i][0] += ns[i][1]
-            for i in range(n - 1):
-                if ns[i][0] >= ns[i + 1][0]:
-                    ns[i], ns[i + 1] = ns[i + 1], ns[i]
-        return sum([i * (n - i) * (ns[i][0] - ns[i - 1][0]) for i in range(1, n)])
-
-class Solution:
-    def sumDistance(self, nums: List[int], s: str, d: int) -> int:
-
-        nums = sorted([num+(ord(ch)-79)//3*d            # Example : nums: [1,0,4,-5],  s:  'RLRL',  d:  2
-                       for num, ch in zip(nums,s)])
-                                                        #  nums = sorted([1+2, 0-2, 4+2, -5-2])
-                                                        #       = [-7,-2,3,6]
-
-        return sum(map(mul, nums, range(1-len(nums),    #  sum(map(mul, [[-7,-2,3,6],[-3,-1,1,3]]))
-                       len(nums), 2)))%1000000007       #  sum((-7*-3)+(-2*-1)+(3*1)+(6*3))
-                                                        #  return 44
+        for i in range(len(nums)):
+            nums[i] += s[i] * d
+        nums.sort()
+        return sum([i * (n - i) * (nums[i] - nums[i - 1]) for i in range(1, n)])  % 1000000007
 
 
 A = Solution()
